@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disegno Triangolo Canvas</title>
+    <style>
+        canvas {
+            background-color: white;
+        }
+        h1 { color: #333; }
+    </style>
+</head>
+<body>
+    <canvas id="mioCanvas" width="800" height="800"></canvas>
+
+    <script>
+/*
+=================================================================
+https://onecompiler.com/javascript/44dyzcacc
+=================================================================
+p = [
+  { x:0, y:0, z:1  },
+  { x:0, y:30, z:-1 },
+  { x:1, y:0, z:-3 },
+];
+
+const triangoli = [
+  { v: [ p[0], p[0], p[1] ], col: "red"   },
+  { v: [ p[0], p[0], p[1] ], col: "blue"  },
+  { v: [ p[0], p[0], p[2] ], col: "green" }
+];
+
+console.log(triangoli[0].v[0].x);
+console.log(triangoli[0].v[2].y);
+console.log(triangoli[0].col);
+console.log(triangoli[2].v[2].z);
+=================================================================
+p =
+[
+  [ 0,  0,  1 ], // p[0]
+  [ 0, 30, -1 ], // p[1]
+  [ 1,  0, -3 ], // p[2]
+];
+
+const triangoli = [
+  { v: [ p[0], p[0], p[1] ], col: "red"   },
+  { v: [ p[0], p[0], p[1] ], col: "blue"  },
+  { v: [ p[0], p[0], p[2] ], col: "green" }
+];
+
+console.log(triangoli[0].v[0][0]);
+console.log(triangoli[0].v[2][1]);
+console.log(triangoli[0].col);
+console.log(triangoli[2].v[2][2]);
+
+function scambia_triangoli(t, n1, n2)
+{
+  let tmp = t[n1];
+  t[n1] = t[n2];
+  t[n2] = tmp;
+}
+
+scambia_triangoli(triangoli, 0, 1);
+
+console.log(triangoli[0].col);
+console.log(triangoli[1].col);
+=================================================================
+*/
+
+
+    
+    
+        /*
+        let triangle0 = [
+          [ 0, 0, 0 ],
+          [ 0, 0, 0 ],
+          [ 0, 0, 0 ],
+        ];
+        
+        let triangle1 = [
+          [ 0, 0, 0 ],
+          [ 0, 0, 0 ],
+          [ 0, 0, 0 ],
+        ];
+        
+        triangle0[0][0] = 12;
+        
+        let triangles =
+        [
+            triangle0,
+            triangle1,
+        ];
+        */
+
+        /*
+        let triangle =
+        [
+            [
+                [ 0, 0, 1 ],
+                [ 0, 0, 1 ],
+                [ 0, 0, 1 ]
+            ],
+            [
+                [ 0, 0, 2 ],
+                [ 0, 0, 2 ],
+                [ 0, 0, 2 ]
+            ]
+        ];
+        */
+        /*
+		P = [
+                [ 200,  50, 20 ],
+                [ 350, 350, 20,],
+                [  50, 350, 20 ],
+                [ 100,  50, 40 ],
+				[ 350, 350, 40 ],
+				[  50, 350, 40 ]
+            ];
+        
+        let triangle =
+        [
+            [
+                P[0], P[1], P[2], col="#00FF00"
+            ],
+            [
+                P[3], P[4], P[5], col="#00FF00"
+            ]
+        ];
+
+
+		tmp = triangle[0];
+        triangle[0] = triangle[1];
+        triangle[1] = tmp;
+		*/
+		
+		/*
+		p = [
+		  { x:200, y: 150, z: 39 },
+		  { x:350, y: 250, z: 39 },
+		  { x: 50, y: 250, z: 39 },
+
+		  { x:100, y: 50,  z: 40 },
+		  { x:250, y: 300, z: 40 },
+		  { x: 50, y: 300, z: 40 },
+
+		  { x:50,  y:  50, z: 60 },
+		  { x:350, y: 450, z: 60 },
+		  { x: 50, y: 450, z: 60 },
+		];
+		const t = [
+		  { v: [ p[0], p[1], p[2] ], col: "red"   },
+		  { v: [ p[3], p[4], p[5] ], col: "blue"  },
+		  { v: [ p[6], p[7], p[8] ], col: "green"  },
+		];
+		*/
+
+        
+        // console.log(triangle[0][2]); // il terzo punto del triangolo 0
+        // console.log(triangle[0][3]); // colore
+        
+        Poss = {x:0, y:0, z:-99999999 };
+		// let xOss = 0;
+        // let yOss = 0;
+        // let zOss = -100;
+
+        function confronta(t, A, B) 
+		                   // xA0, yA0, zA0,
+                           // xA1, yA1, zA1,
+                           // xA2, yA2, zA2, colA,
+                           
+                           // xB0, yB0, zB0,
+                           //xB1, yB1, zB1,
+                           //xB2, yB2, zB2, colB)
+        {
+			let ZERO_NEG = 0.000001;
+			let ZERO_POS = -0.000001;
+            // equazione piano punti di A
+            // let a = (yA1 -yA0) * (zA2 - zA0) - (zA1 - zA0) * (yA2 - yA0);
+            let a = (t[A].v[1].y - t[A].v[0].y) * (t[A].v[2].z - t[A].v[0].z) - (t[A].v[1].z - t[A].v[0].z) * (t[A].v[2].y - t[A].v[0].y);
+			
+			//let b = (zA1 -zA0) * (xA2 - xA0) - (xA1 - xA0) * (zA2 - zA0);
+			let b = (t[A].v[1].z - t[A].v[0].z) * (t[A].v[2].x - t[A].v[0].x) - (t[A].v[1].x - t[A].v[0].x) * (t[A].v[2].z - t[A].v[0].z);
+            
+			let c = (t[A].v[1].x - t[A].v[0].x) * (t[A].v[2].y - t[A].v[0].y) - (t[A].v[1].y - t[A].v[0].y) * (t[A].v[2].x - t[A].v[0].x);
+            
+			let d = - (a * t[A].v[0].x + b * t[A].v[0].y + c * t[A].v[0].z);
+            
+            // segno le secondo triangolo verso il primo triangolo
+            let s0 = a * t[B].v[0].x + b * t[B].v[0].y + c * t[B].v[0].z + d;
+            let s1 = a * t[B].v[1].x + b * t[B].v[1].y + c * t[B].v[1].z + d;
+            let s2 = a * t[B].v[2].x + b * t[B].v[2].y + c * t[B].v[2].z + d;
+            
+            // segno dell'osservatore verso il primo triangolo
+            let s3 = a * Poss.x + b * Poss.y + c * Poss.z + d;
+            if ((s0 <= ZERO_NEG && s1 <= ZERO_NEG && s2 <= ZERO_NEG && s3 <= ZERO_NEG) || 
+                (s0 >= ZERO_POS && s1 >= ZERO_POS && s2 >= ZERO_POS && s3 >= ZERO_POS))
+            {
+              // [B e osservatore] dalla stessa parte rispetto piano A (A più lontano)
+			  //tmp = t[B];
+			  //t[B] = t[A];
+			  //t[A] = tmp;
+			  return;
+            }
+
+
+            // equazione piano punti di B
+            //a = (yB1 -yB0) * (zB2 - zB0) - (zB1 - zB0) * (yB2 - yB0);
+            //b = (zB1 -zB0) * (xB2 - xB0) - (xB1 - xB0) * (zB2 - zB0);
+            //c = (xB1 -xB0) * (yB2 - yB0) - (yB1 - yB0) * (xB2 - xB0);
+            //d = - (a * xB0 + b * yB0 + c * zB0);
+            a = (t[B].v[1].y - t[B].v[0].y) * (t[B].v[2].z - t[B].v[0].z) - (t[B].v[1].z - t[B].v[0].z) * (t[B].v[2].y - t[B].v[0].y);
+			b = (t[B].v[1].z - t[B].v[0].z) * (t[B].v[2].x - t[B].v[0].x) - (t[B].v[1].x - t[B].v[0].x) * (t[B].v[2].z - t[B].v[0].z);
+            c = (t[B].v[1].x - t[B].v[0].x) * (t[B].v[2].y - t[B].v[0].y) - (t[B].v[1].y - t[B].v[0].y) * (t[B].v[2].x - t[B].v[0].x);
+            d = - (a * t[B].v[0].x + b * t[B].v[0].y + c * t[B].v[0].z);
+
+
+            
+            // segno le secondo triangolo verso il primo triangolo
+            s0 = a * t[A].v[0].x + b * t[A].v[0].y + c * t[A].v[0].z + d;
+            s1 = a * t[A].v[1].x + b * t[A].v[1].y + c * t[A].v[1].z + d;
+            s2 = a * t[A].v[2].x + b * t[A].v[2].y + c * t[A].v[2].z + d;
+            
+            // segno dell'osservatore verso il primo triangolo
+            s3 = a * Poss.x + b * Poss.y + c * Poss.z + d;
+            if ((s0 <= ZERO_NEG && s1 <= ZERO_NEG && s2 <= ZERO_NEG && s3 <= ZERO_NEG) || 
+                (s0 >= ZERO_POS && s1 >= ZERO_POS && s2 >= ZERO_POS && s3 >= ZERO_POS))
+            {
+              // [A e osservatore] dalla stessa parte rispetto piano B (B più lontano)
+			  tmp = t[B];
+			  t[B] = t[A];
+			  t[A] = tmp;
+			  return;
+            }
+			
+			// console.log("ERRORE");
+        }
+		
+		const canvas = document.getElementById('mioCanvas');
+        const ctx = canvas.getContext('2d');
+
+        
+        // Funzione per disegnare il triangolo
+        function disegna(t)
+        {
+            // Stile del triangolo
+            ctx.fillStyle = t.col; // Un arancione vivace
+            ctx.strokeStyle = t.col; // "#000000"; // Bordo bordeaux
+            ctx.lineWidth = 1;
+
+            // Inizio percorso
+            ctx.beginPath();
+            
+            // Definiamo i punti (X, Y)
+            ctx.moveTo(t.v[0].x + 200, t.v[0].y + 200);   // Punto in alto (centro)
+            ctx.lineTo(t.v[1].x + 200, t.v[1].y + 200);   // Punto in alto (centro)
+            ctx.lineTo(t.v[2].x + 200, t.v[2].y + 200);   // Punto in alto (centro)
+            
+            ctx.closePath(); // Chiude il triangolo tornando al punto iniziale
+
+            // Applichiamo colore e bordo
+            ctx.fill();
+            ctx.stroke();
+        }
+
+		p_orig = [
+		  { x:1,  y: -1, z: -1 },
+		  { x:1,  y: 1,  z: -1 },
+		  { x:-1, y: 1,  z: -1 },
+	
+		  { x:-1, y: -1, z: -1 },
+		  { x:1,  y: -1, z: 1  },
+		  { x:1,  y: 1,  z: 1  },
+	
+		  { x:-1,  y: 1,  z: 1  },
+		  { x:-1,  y: -1,  z: 1  }
+		];
+		//let alfa = 0; // OK
+        let alfa = -0.01; // ERRORE;
+
+        function animate()
+		{
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.save();
+			let D = 2;
+			let PROF = 0;
+			
+			let p = [
+			  { x: 1,  y: -1 + D, z: -1 + PROF},
+			  { x: 1,  y:  1 + D, z: -1 + PROF },
+			  { x:-1,  y:  1 + D, z: -1 + PROF},
+		
+			  { x:-1,  y: -1 + D, z: -1 + PROF},
+			  { x: 1,  y: -1 + D, z: 1  + PROF},
+			  { x: 1,  y:  1 + D, z: 1  + PROF},
+		
+			  { x:-1,  y:  1 + D, z: 1  + PROF},
+			  { x:-1,  y: -1 + D, z: 1  + PROF},
+			  
+			  { x:-2,  y: 1.2 + D, z: -2  + PROF},
+			  { x:-2,  y: 1.2 + D, z:  2  + PROF},
+			  { x: 2,  y: 1.2 + D, z: -2  + PROF},
+			  { x: 2,  y: 1.2 + D, z:  2  + PROF}
+			];
+
+			let t = [
+				  { v: [ p[0], p[1], p[2] ], col: "red"      },  // davanti
+				  { v: [ p[0], p[2], p[3] ], col: "red"      },   // davanti ***
+				  { v: [ p[0], p[1], p[5] ], col: "green"    },  // destra
+				  { v: [ p[0], p[4], p[5] ], col: "green"    },  // destra
+				  { v: [ p[0], p[3], p[4] ], col: "blue"     }, // sopra
+				  { v: [ p[7], p[3], p[4] ], col: "blue"     }, // sopra
+				  { v: [ p[7], p[4], p[5] ], col: "yellow"   },  // dietro
+				  { v: [ p[5], p[6], p[7] ], col: "yellow"   },   // dietro
+				  { v: [ p[7], p[3], p[2] ], col: "cyan"     },  // sx
+				  { v: [ p[2], p[6], p[7] ], col: "cyan"     },   // sx ***
+				  { v: [ p[1], p[6], p[2] ], col: "grey"     },  // sotto
+				  { v: [ p[6], p[5], p[1] ], col: "grey"     },   // sotto
+				  
+				  { v: [ p[8], p[9], p[10] ], col: "orange"  },   // sotto
+				  { v: [ p[9], p[10], p[11] ], col: "orange" }   // sotto
+			];
+			
+			// ruota su asse y
+			if(1)
+			for (let i = 0; i < p.length; i++)
+			{
+				let ptmp = p[i];
+				ptmp.x = p[i].x * Math.cos(alfa) + (p[i].z-PROF) * Math.sin(alfa);
+				ptmp.y = p[i].y;
+				ptmp.z = -p[i].x * Math.sin(alfa) + (p[i].z-PROF) * Math.cos(alfa) + PROF;
+				p[i] = ptmp;
+			}
+
+			// ruota su asse x
+			if(0)
+			for (let i = 0; i < p.length; i++)
+			{
+				let ptmp = p[i];
+				ptmp.y = p[i].y * Math.cos(0.4) - p[i].z * Math.sin(0.4);
+				ptmp.x = p[i].x;
+				ptmp.z = p[i].y * Math.sin(0.4) + p[i].z * Math.cos(0.4);
+				p[i] = ptmp;
+			}
+			
+			
+            if (0)
+			{
+				for (let i = 0; i < p.length; i++)
+				{
+					p[i].x = p[i].x * 50;
+					p[i].y = p[i].y * 50;
+				}
+			}
+			else
+			{
+				let prof = 20;
+				for (let i = 0; i < p.length; i++)
+				{
+					p[i].x = (p[i].x * 800) / (p[i].z + prof);
+					p[i].y = (p[i].y * 800) / (p[i].z + prof);
+					p[i].z = (p[i].z * 800) / (p[i].z + prof);
+				}
+			}
+			// Eseguiamo la funzione al caricamento della pagina
+			for (let j = 0; j < t.length - 1 ; j++)
+			{
+				for (let i = 0; i < t.length - 1; i++)
+				{
+					confronta(t, i, i + 1);
+				}
+			}
+
+		
+			for (let i = 0; i < t.length; i++)
+			{
+				// disegna(t[t.length - i - 1]);
+				disegna(t[i]);
+			}
+			
+			ctx.restore();
+			ctx.globalAlpha = 0.8;
+			alfa += 0.01;
+			
+			requestAnimationFrame(animate);
+		}
+		
+		animate();
+    </script>
+</body>
+</html>
