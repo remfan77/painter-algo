@@ -15,175 +15,16 @@
     <canvas id="mioCanvas" width="800" height="800"></canvas>
 
     <script>
-/*
-=================================================================
-https://onecompiler.com/javascript/44dyzcacc
-=================================================================
-p = [
-  { x:0, y:0, z:1  },
-  { x:0, y:30, z:-1 },
-  { x:1, y:0, z:-3 },
-];
-
-const triangoli = [
-  { v: [ p[0], p[0], p[1] ], col: "red"   },
-  { v: [ p[0], p[0], p[1] ], col: "blue"  },
-  { v: [ p[0], p[0], p[2] ], col: "green" }
-];
-
-console.log(triangoli[0].v[0].x);
-console.log(triangoli[0].v[2].y);
-console.log(triangoli[0].col);
-console.log(triangoli[2].v[2].z);
-=================================================================
-p =
-[
-  [ 0,  0,  1 ], // p[0]
-  [ 0, 30, -1 ], // p[1]
-  [ 1,  0, -3 ], // p[2]
-];
-
-const triangoli = [
-  { v: [ p[0], p[0], p[1] ], col: "red"   },
-  { v: [ p[0], p[0], p[1] ], col: "blue"  },
-  { v: [ p[0], p[0], p[2] ], col: "green" }
-];
-
-console.log(triangoli[0].v[0][0]);
-console.log(triangoli[0].v[2][1]);
-console.log(triangoli[0].col);
-console.log(triangoli[2].v[2][2]);
-
-function scambia_triangoli(t, n1, n2)
-{
-  let tmp = t[n1];
-  t[n1] = t[n2];
-  t[n2] = tmp;
-}
-
-scambia_triangoli(triangoli, 0, 1);
-
-console.log(triangoli[0].col);
-console.log(triangoli[1].col);
-=================================================================
-*/
-
-
-    
-    
-        /*
-        let triangle0 = [
-          [ 0, 0, 0 ],
-          [ 0, 0, 0 ],
-          [ 0, 0, 0 ],
-        ];
-        
-        let triangle1 = [
-          [ 0, 0, 0 ],
-          [ 0, 0, 0 ],
-          [ 0, 0, 0 ],
-        ];
-        
-        triangle0[0][0] = 12;
-        
-        let triangles =
-        [
-            triangle0,
-            triangle1,
-        ];
-        */
-
-        /*
-        let triangle =
-        [
-            [
-                [ 0, 0, 1 ],
-                [ 0, 0, 1 ],
-                [ 0, 0, 1 ]
-            ],
-            [
-                [ 0, 0, 2 ],
-                [ 0, 0, 2 ],
-                [ 0, 0, 2 ]
-            ]
-        ];
-        */
-        /*
-		P = [
-                [ 200,  50, 20 ],
-                [ 350, 350, 20,],
-                [  50, 350, 20 ],
-                [ 100,  50, 40 ],
-				[ 350, 350, 40 ],
-				[  50, 350, 40 ]
-            ];
-        
-        let triangle =
-        [
-            [
-                P[0], P[1], P[2], col="#00FF00"
-            ],
-            [
-                P[3], P[4], P[5], col="#00FF00"
-            ]
-        ];
-
-
-		tmp = triangle[0];
-        triangle[0] = triangle[1];
-        triangle[1] = tmp;
-		*/
-		
-		/*
-		p = [
-		  { x:200, y: 150, z: 39 },
-		  { x:350, y: 250, z: 39 },
-		  { x: 50, y: 250, z: 39 },
-
-		  { x:100, y: 50,  z: 40 },
-		  { x:250, y: 300, z: 40 },
-		  { x: 50, y: 300, z: 40 },
-
-		  { x:50,  y:  50, z: 60 },
-		  { x:350, y: 450, z: 60 },
-		  { x: 50, y: 450, z: 60 },
-		];
-		const t = [
-		  { v: [ p[0], p[1], p[2] ], col: "red"   },
-		  { v: [ p[3], p[4], p[5] ], col: "blue"  },
-		  { v: [ p[6], p[7], p[8] ], col: "green"  },
-		];
-		*/
-
-        
-        // console.log(triangle[0][2]); // il terzo punto del triangolo 0
-        // console.log(triangle[0][3]); // colore
-        
         Poss = {x:0, y:0, z:-99999999 };
-		// let xOss = 0;
-        // let yOss = 0;
-        // let zOss = -100;
 
         function confronta(t, A, B) 
-		                   // xA0, yA0, zA0,
-                           // xA1, yA1, zA1,
-                           // xA2, yA2, zA2, colA,
-                           
-                           // xB0, yB0, zB0,
-                           //xB1, yB1, zB1,
-                           //xB2, yB2, zB2, colB)
         {
 			let ZERO_NEG = 0.000001;
 			let ZERO_POS = -0.000001;
             // equazione piano punti di A
-            // let a = (yA1 -yA0) * (zA2 - zA0) - (zA1 - zA0) * (yA2 - yA0);
             let a = (t[A].v[1].y - t[A].v[0].y) * (t[A].v[2].z - t[A].v[0].z) - (t[A].v[1].z - t[A].v[0].z) * (t[A].v[2].y - t[A].v[0].y);
-			
-			//let b = (zA1 -zA0) * (xA2 - xA0) - (xA1 - xA0) * (zA2 - zA0);
 			let b = (t[A].v[1].z - t[A].v[0].z) * (t[A].v[2].x - t[A].v[0].x) - (t[A].v[1].x - t[A].v[0].x) * (t[A].v[2].z - t[A].v[0].z);
-            
 			let c = (t[A].v[1].x - t[A].v[0].x) * (t[A].v[2].y - t[A].v[0].y) - (t[A].v[1].y - t[A].v[0].y) * (t[A].v[2].x - t[A].v[0].x);
-            
 			let d = - (a * t[A].v[0].x + b * t[A].v[0].y + c * t[A].v[0].z);
             
             // segno le secondo triangolo verso il primo triangolo
@@ -205,17 +46,11 @@ console.log(triangoli[1].col);
 
 
             // equazione piano punti di B
-            //a = (yB1 -yB0) * (zB2 - zB0) - (zB1 - zB0) * (yB2 - yB0);
-            //b = (zB1 -zB0) * (xB2 - xB0) - (xB1 - xB0) * (zB2 - zB0);
-            //c = (xB1 -xB0) * (yB2 - yB0) - (yB1 - yB0) * (xB2 - xB0);
-            //d = - (a * xB0 + b * yB0 + c * zB0);
             a = (t[B].v[1].y - t[B].v[0].y) * (t[B].v[2].z - t[B].v[0].z) - (t[B].v[1].z - t[B].v[0].z) * (t[B].v[2].y - t[B].v[0].y);
 			b = (t[B].v[1].z - t[B].v[0].z) * (t[B].v[2].x - t[B].v[0].x) - (t[B].v[1].x - t[B].v[0].x) * (t[B].v[2].z - t[B].v[0].z);
             c = (t[B].v[1].x - t[B].v[0].x) * (t[B].v[2].y - t[B].v[0].y) - (t[B].v[1].y - t[B].v[0].y) * (t[B].v[2].x - t[B].v[0].x);
             d = - (a * t[B].v[0].x + b * t[B].v[0].y + c * t[B].v[0].z);
-
-
-            
+           
             // segno le secondo triangolo verso il primo triangolo
             s0 = a * t[A].v[0].x + b * t[A].v[0].y + c * t[A].v[0].z + d;
             s1 = a * t[A].v[1].x + b * t[A].v[1].y + c * t[A].v[1].z + d;
@@ -239,7 +74,6 @@ console.log(triangoli[1].col);
 		const canvas = document.getElementById('mioCanvas');
         const ctx = canvas.getContext('2d');
 
-        
         // Funzione per disegnare il triangolo
         function disegna(t)
         {
@@ -388,4 +222,5 @@ console.log(triangoli[1].col);
 		animate();
     </script>
 </body>
+
 </html>
