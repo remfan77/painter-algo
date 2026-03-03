@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-    <canvas id="mioCanvas" width="400" height="400"></canvas>
+    <canvas id="mioCanvas" width="800" height="800"></canvas>
 
     <script>
         Poss = {x:0, y:0, z:-999999999999 };
@@ -85,9 +85,9 @@
             ctx.strokeStyle = t.col; // "#000000"; // Bordo bordeaux
             ctx.lineWidth = 1;
 			
-			ctx.fillStyle   = "white"; // Un arancione vivace
-            ctx.strokeStyle = "black"; // "#000000"; // Bordo bordeaux
-            ctx.lineWidth = 1;
+			//ctx.fillStyle   = "white"; // Un arancione vivace
+            //ctx.strokeStyle = "black"; // "#000000"; // Bordo bordeaux
+            //ctx.lineWidth = 1;
 
             // Inizio percorso
             ctx.beginPath();
@@ -110,11 +110,22 @@
 		{
 			for (let i = 0; i < p.length; i++)
 			{
-				let ptmp = p[i];
-				ptmp.x = (p[i].x - x0) * Math.cos(alfa) - (p[i].z - z0) * Math.sin(alfa) + x0;
-				ptmp.y = p[i].y;
-				ptmp.z = (p[i].x - x0) * Math.sin(alfa) + (p[i].z - z0) * Math.cos(alfa) + z0;
-				p[i] = ptmp;
+                if(1)
+                {
+                    let xrot = (p[i].x - x0) * Math.cos(alfa) - (p[i].z - z0) * Math.sin(alfa) + x0;
+                    let zrot = (p[i].x - x0) * Math.sin(alfa) + (p[i].z - z0) * Math.cos(alfa) + z0;
+                    p[i].x = xrot;
+                    p[i].z = zrot;
+                }
+                else
+                {
+                    let ptmp = p[i];
+                    ptmp.x = (p[i].x - x0) * Math.cos(alfa) - (p[i].z - z0) * Math.sin(alfa) + x0;
+                    ptmp.y = p[i].y;
+                    ptmp.z = (p[i].x - x0) * Math.sin(alfa) + (p[i].z - z0) * Math.cos(alfa) + z0;
+                    console.log("ciao");
+                    p[i] = ptmp;
+                }
 			}
 		}
 
@@ -122,11 +133,10 @@
 		{
 			for (let i = 0; i < p.length; i++)
 			{
-				let ptmp = p[i];
-				ptmp.y = (p[i].y - y0) * Math.cos(0.1) - (p[i].z - z0) * Math.sin(0.1) + y0;
-				ptmp.x = p[i].x;
-				ptmp.z = (p[i].y - y0) * Math.sin(0.1) + (p[i].z - z0) * Math.cos(0.1) + z0;
-				p[i] = ptmp;
+				let yrot = (p[i].y - y0) * Math.cos(0.3) - (p[i].z - z0) * Math.sin(0.3) + y0;
+				let zrot = (p[i].y - y0) * Math.sin(0.3) + (p[i].z - z0) * Math.cos(0.3) + z0;
+				p[i].y = yrot;
+                p[i].z = zrot;
 			}
 		}
 		
@@ -147,11 +157,6 @@
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			ctx.save();
 
-			let PROF = 0;
-			let POS_CUBE_X = 0;
-			let POS_CUBE_Y = 2;
-			let POS_CUBE_Z = 0;
-			
 			let p = [
 			  { x: 1,  y: -1,  z: -1 },
 			  { x: 1,  y:  1,  z: -1 },
@@ -164,14 +169,13 @@
 			  { x:-1,  y:  1,  z:  1 },
 			  { x:-1,  y: -1,  z:  1 },
 									 
-			  { x:-1,  y: 1, z: -1 },
-			  { x:-1,  y: 1, z:  1 },
-			  { x: 1,  y: 1, z: -1 },
-			  { x: 1,  y: 1, z:  1 }
+			  { x:-3,  y: 1.4, z: -3 },
+			  { x:-3,  y: 1.4, z:  3 },
+			  { x: 3,  y: 1.4, z: -3 },
+			  { x: 3,  y: 1.4, z:  3 }
 			];
 
 			let t = [
-			/*
 				  { v: [ p[0],  p[1],  p[2] ],  col: "red"      },  // davanti
 				  { v: [ p[0],  p[2],  p[3] ],  col: "red"      },  // davanti ***
 				  { v: [ p[0],  p[1],  p[5] ],  col: "green"    },  // destra
@@ -184,7 +188,7 @@
 				  { v: [ p[2],  p[6],  p[7] ],  col: "cyan"     },  // sx ***
 				  { v: [ p[1],  p[6],  p[2] ],  col: "grey"     },  // sotto
 				  { v: [ p[6],  p[5],  p[1] ],  col: "grey"     },  // sotto
-			*/
+
 				  { v: [ p[8],  p[9],  p[10] ], col: "orange"   },  // sotto base
 				  { v: [ p[9],  p[10], p[11] ], col: "orange"   }   // sotto base
 			];                  
@@ -193,7 +197,7 @@
 			ruota_su_asse_y(p, 0, 0); // POS_CUBE_X, POS_CUBE_Z);
 
 			// ruota su asse x
-			// ruota_su_asse_x(p, POS_CUBE_Y, POS_CUBE_Z);
+			ruota_su_asse_x(p, 0, 0);
 			
 			if (0)
 			{
@@ -205,17 +209,18 @@
 			}
 			else
 			{
-				let prof = 7; // -Pcam.z;
+				let prof = 15; // -Pcam.z;
 				for (let i = 0; i < p.length; i++)
 				{
-					p[i].x = (p[i].x * 1000) / (p[i].z + prof);
-					p[i].y = (p[i].y * 1000) / (p[i].z + prof);
-					// p[i].z = 1 / (p[i].z); //  * 400) / (p[i].z + prof);
+					p[i].x = (p[i].x * 500) / (p[i].z + prof);
+					p[i].y = (p[i].y * 500) / (p[i].z + prof);
+					p[i].z = 1 / (p[i].z + prof); //  * 400) / (p[i].z + prof);
 				}
-				Poss.z = 0; //  = {x:0, y:0, z:-999999999999 };
+				Poss = {x:0, y:0, z:-999999999999 };
 			}
 			// Eseguiamo la funzione al caricamento della pagina
-			if (0)for (let j = 0; j < t.length - 1 ; j++)
+			//if (0)
+            for (let j = 0; j < t.length - 1 ; j++)
 			{
 				for (let i = 0; i < t.length - 1; i++)
 				{
@@ -227,11 +232,11 @@
 			for (let i = 0; i < t.length; i++)
 			{
 				disegna(t[t.length - i - 1]);
-				// disegna(t[i]);
+				//disegna(t[i]);
 			}
 			
-			ctx.restore();
-			ctx.globalAlpha = 0.8;
+			// ctx.restore();
+			//ctx.globalAlpha = 0.8;
 			alfa += 0.01;
 			
 			requestAnimationFrame(animate);
