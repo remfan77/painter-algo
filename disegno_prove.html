@@ -7,73 +7,147 @@
     <style>
         canvas {
             background-color: white;
-			border: 1px solid black;
+            border: 1px solid black;
         }
         h1 { color: #333; }
     </style>
 </head>
 <body>
-    <canvas id="mioCanvas" width="800" height="800"></canvas>
+    <canvas id="mioCanvas" width="800" height="600"></canvas><br>
+    <textarea id="message" name="message" rows="15" cols="100">
+      Default text goes here...
+    </textarea><br>
+    <button type="button" id="btn-clear" onclick="Click()">STOP</button>
 
     <script>
+        document.getElementById('message').value = "";
         Poss = {x:0, y:0, z:-999999999999 };
-		Pcam = {x:0, y:50, z:-100 };
+        let stop = 0;
+        
+        function Click()
+        {
+            stop = !stop;
+        }
+        
+        function segno1(x)
+        {
+            if (x >= 0)
+                return 1;
+            return -1;
+        }
+        
+        function segno2(x)
+        {
+            if (x <= 0)
+                return -1;
+            return 1;
+        }
 
         function confronta(t, A, B) 
         {
-			let ZERO_NEG = 0.000001;
-			let ZERO_POS = -0.000001;
+            let ZERO_NEG = 0.1;
+            let ZERO_POS = -0.1;
+            
+            if ((t[A].col == "blue" && t[B].col == "green") ||
+                (t[B].col == "blue" && t[A].col == "green"))
+                    debugger;
+                
             // equazione piano punti di A
             let a = (t[A].v[1].y - t[A].v[0].y) * (t[A].v[2].z - t[A].v[0].z) - (t[A].v[1].z - t[A].v[0].z) * (t[A].v[2].y - t[A].v[0].y);
-			let b = (t[A].v[1].z - t[A].v[0].z) * (t[A].v[2].x - t[A].v[0].x) - (t[A].v[1].x - t[A].v[0].x) * (t[A].v[2].z - t[A].v[0].z);
-			let c = (t[A].v[1].x - t[A].v[0].x) * (t[A].v[2].y - t[A].v[0].y) - (t[A].v[1].y - t[A].v[0].y) * (t[A].v[2].x - t[A].v[0].x);
-			let d = - (a * t[A].v[0].x + b * t[A].v[0].y + c * t[A].v[0].z);
+            let b = (t[A].v[1].z - t[A].v[0].z) * (t[A].v[2].x - t[A].v[0].x) - (t[A].v[1].x - t[A].v[0].x) * (t[A].v[2].z - t[A].v[0].z);
+            let c = (t[A].v[1].x - t[A].v[0].x) * (t[A].v[2].y - t[A].v[0].y) - (t[A].v[1].y - t[A].v[0].y) * (t[A].v[2].x - t[A].v[0].x);
+            let d = - (a * t[A].v[0].x + b * t[A].v[0].y + c * t[A].v[0].z);
             
             // segno le secondo triangolo verso il primo triangolo
-            let s0 = a * t[B].v[0].x + b * t[B].v[0].y + c * t[B].v[0].z + d;
-            let s1 = a * t[B].v[1].x + b * t[B].v[1].y + c * t[B].v[1].z + d;
-            let s2 = a * t[B].v[2].x + b * t[B].v[2].y + c * t[B].v[2].z + d;
+            let sAB0 = a * t[B].v[0].x + b * t[B].v[0].y + c * t[B].v[0].z + d;
+            let sAB1 = a * t[B].v[1].x + b * t[B].v[1].y + c * t[B].v[1].z + d;
+            let sAB2 = a * t[B].v[2].x + b * t[B].v[2].y + c * t[B].v[2].z + d;
             
             // segno dell'osservatore verso il primo triangolo
-            let s3 = a * Poss.x + b * Poss.y + c * Poss.z + d;
-            if ((s0 <= ZERO_NEG && s1 <= ZERO_NEG && s2 <= ZERO_NEG && s3 <= ZERO_NEG) || 
-                (s0 >= ZERO_POS && s1 >= ZERO_POS && s2 >= ZERO_POS && s3 >= ZERO_POS))
+            let sAB3 = a * Poss.x + b * Poss.y + c * Poss.z + d;
+            
+                    let err=0;
+                    if ((segno1(sAB0) != segno1(sAB1)) ||
+                        (segno1(sAB1) != segno1(sAB2)) || 
+                        (segno1(sAB2) != segno1(sAB0))) err=1;
+                    if ((segno2(sAB0) != segno2(sAB1)) ||
+                         (segno2(sAB1) != segno2(sAB2)) || 
+                         (segno2(sAB2) != segno2(sAB0)))
+                         {
+                           //document.getElementById('message').value += sAB0 + "  " + sAB1 + "  " + sAB2 + "\n";
+                           //document.getElementById('message').scrollTop = document.getElementById('message').scrollHeight;
+                         }
+                    
+                    
+            if ((sAB0 <= ZERO_NEG && sAB1 <= ZERO_NEG && sAB2 <= ZERO_NEG && sAB3 <= ZERO_NEG) || 
+                (sAB0 >= ZERO_POS && sAB1 >= ZERO_POS && sAB2 >= ZERO_POS && sAB3 >= ZERO_POS))
             {
               // [B e osservatore] dalla stessa parte rispetto piano A (A più lontano)
-			  //tmp = t[B];
-			  //t[B] = t[A];
-			  //t[A] = tmp;
-			  return;
+              //tmp = t[B];
+              //t[B] = t[A];
+              //t[A] = tmp;
+              return;
             }
+                    /*
+                    if (sAB0 <= ZERO_NEG && sAB1 <= ZERO_NEG && sAB2 <= ZERO_NEG && sAB3 >= ZERO_POS)
+                    {
+                          tmp = t[B];
+                          t[B] = t[A];
+                          t[A] = tmp;
+                          return;
+                    }
+                    
+                    if (sAB0 >= ZERO_POS && sAB1 >= ZERO_POS && sAB2 >= ZERO_POS && sAB3 <= ZERO_NEG)
+                    {
+                          tmp = t[B];
+                          t[B] = t[A];
+                          t[A] = tmp;
+                          return;
+                    }
+                    */
 
 
             // equazione piano punti di B
             a = (t[B].v[1].y - t[B].v[0].y) * (t[B].v[2].z - t[B].v[0].z) - (t[B].v[1].z - t[B].v[0].z) * (t[B].v[2].y - t[B].v[0].y);
-			b = (t[B].v[1].z - t[B].v[0].z) * (t[B].v[2].x - t[B].v[0].x) - (t[B].v[1].x - t[B].v[0].x) * (t[B].v[2].z - t[B].v[0].z);
+            b = (t[B].v[1].z - t[B].v[0].z) * (t[B].v[2].x - t[B].v[0].x) - (t[B].v[1].x - t[B].v[0].x) * (t[B].v[2].z - t[B].v[0].z);
             c = (t[B].v[1].x - t[B].v[0].x) * (t[B].v[2].y - t[B].v[0].y) - (t[B].v[1].y - t[B].v[0].y) * (t[B].v[2].x - t[B].v[0].x);
             d = - (a * t[B].v[0].x + b * t[B].v[0].y + c * t[B].v[0].z);
            
             // segno le secondo triangolo verso il primo triangolo
-            s0 = a * t[A].v[0].x + b * t[A].v[0].y + c * t[A].v[0].z + d;
-            s1 = a * t[A].v[1].x + b * t[A].v[1].y + c * t[A].v[1].z + d;
-            s2 = a * t[A].v[2].x + b * t[A].v[2].y + c * t[A].v[2].z + d;
+            let sBA0 = a * t[A].v[0].x + b * t[A].v[0].y + c * t[A].v[0].z + d;
+            let sBA1 = a * t[A].v[1].x + b * t[A].v[1].y + c * t[A].v[1].z + d;
+            let sBA2 = a * t[A].v[2].x + b * t[A].v[2].y + c * t[A].v[2].z + d;
             
             // segno dell'osservatore verso il primo triangolo
-            s3 = a * Poss.x + b * Poss.y + c * Poss.z + d;
-            if ((s0 <= ZERO_NEG && s1 <= ZERO_NEG && s2 <= ZERO_NEG && s3 <= ZERO_NEG) || 
-                (s0 >= ZERO_POS && s1 >= ZERO_POS && s2 >= ZERO_POS && s3 >= ZERO_POS))
+            let sBA3 = a * Poss.x + b * Poss.y + c * Poss.z + d;
+            if ((sBA0 <= ZERO_NEG && sBA1 <= ZERO_NEG && sBA2 <= ZERO_NEG && sBA3 <= ZERO_NEG) || 
+                (sBA0 >= ZERO_POS && sBA1 >= ZERO_POS && sBA2 >= ZERO_POS && sBA3 >= ZERO_POS))
             {
               // [A e osservatore] dalla stessa parte rispetto piano B (B più lontano)
-			  tmp = t[B];
-			  t[B] = t[A];
-			  t[A] = tmp;
-			  return;
+              tmp = t[B];
+              t[B] = t[A];
+              t[A] = tmp;
+              return;
             }
-			
-			// console.log("ERRORE");
+                    /*
+                    if (sBA0 >= ZERO_POS && sBA1 >= ZERO_POS && sBA2 >= ZERO_POS && sBA3 <= ZERO_NEG)
+                    {
+                          return;
+                    }
+                    if (sBA0 <= ZERO_NEG && sBA1 <= ZERO_NEG && sBA2 <= ZERO_NEG && sBA3 >= ZERO_POS)
+                    {
+                          return;
+                    }
+                    */
+            
+            //console.log("ERRORE");
+            document.getElementById('message').value += sAB0.toFixed(3).padStart(12, " ") + "  " + sAB1.toFixed(3).padStart(12, " ") + "  " + sAB2.toFixed(3).padStart(12, " ") + "       ";
+            document.getElementById('message').value += sBA0.toFixed(3).padStart(12, " ") + "  " + sBA1.toFixed(3).padStart(12, " ") + "  " + sBA2.toFixed(3).padStart(12, " ") + "\n";
+            document.getElementById('message').scrollTop = document.getElementById('message').scrollHeight;
+
         }
-		
-		const canvas = document.getElementById('mioCanvas');
+        
+        const canvas = document.getElementById('mioCanvas');
         const ctx = canvas.getContext('2d');
 
         // Funzione per disegnare il triangolo
@@ -81,11 +155,11 @@
         {
             // Stile del triangolo
             
-			ctx.fillStyle   = t.col; // Un arancione vivace
+            ctx.fillStyle   = t.col; // Un arancione vivace
             ctx.strokeStyle = t.col; // "#000000"; // Bordo bordeaux
             ctx.lineWidth = 1;
-			
-			//ctx.fillStyle   = "white"; // Un arancione vivace
+            
+            //ctx.fillStyle   = "white"; // Un arancione vivace
             //ctx.strokeStyle = "black"; // "#000000"; // Bordo bordeaux
             //ctx.lineWidth = 1;
 
@@ -104,12 +178,12 @@
             ctx.stroke();
         }
 
-        let alfa = -0.01;
+        let alfa = 3; // -0.01;
 
-		function ruota_su_asse_y(p, x0, z0)
-		{
-			for (let i = 0; i < p.length; i++)
-			{
+        function ruota_su_asse_y(p, x0, z0)
+        {
+            for (let i = 0; i < p.length; i++)
+            {
                 if(1)
                 {
                     let xrot = (p[i].x - x0) * Math.cos(alfa) - (p[i].z - z0) * Math.sin(alfa) + x0;
@@ -126,123 +200,169 @@
                     console.log("ciao");
                     p[i] = ptmp;
                 }
-			}
-		}
+            }
+        }
 
-		function ruota_su_asse_x(p, y0, z0)
-		{
-			for (let i = 0; i < p.length; i++)
-			{
-				let yrot = (p[i].y - y0) * Math.cos(0.3) - (p[i].z - z0) * Math.sin(0.3) + y0;
-				let zrot = (p[i].y - y0) * Math.sin(0.3) + (p[i].z - z0) * Math.cos(0.3) + z0;
-				p[i].y = yrot;
+        function ruota_su_asse_x(p, y0, z0)
+        {
+            for (let i = 0; i < p.length; i++)
+            {
+                let yrot = (p[i].y - y0) * Math.cos(0.3) - (p[i].z - z0) * Math.sin(0.3) + y0;
+                let zrot = (p[i].y - y0) * Math.sin(0.3) + (p[i].z - z0) * Math.cos(0.3) + z0;
+                p[i].y = yrot;
                 p[i].z = zrot;
-			}
-		}
-		
-		function ruota_su_asse_z(p, x0, y0)
-		{
-			for (let i = 0; i < p.length; i++)
-			{
-				let ptmp = p[i];
-				ptmp.x = (p[i].x - x0) * Math.cos(0.4) - (p[i].y - y0) * Math.sin(0.4) + x0;
-				ptmp.y = (p[i].x - x0) * Math.sin(0.4) + (p[i].y - y0) * Math.cos(0.4) + y0;
-				ptmp.z = p[i].z;
-				p[i] = ptmp;
-			}
-		}
+            }
+        }
+        
+        function ruota_su_asse_z(p, x0, y0)
+        {
+            for (let i = 0; i < p.length; i++)
+            {
+                let ptmp = p[i];
+                ptmp.x = (p[i].x - x0) * Math.cos(0.4) - (p[i].y - y0) * Math.sin(0.4) + x0;
+                ptmp.y = (p[i].x - x0) * Math.sin(0.4) + (p[i].y - y0) * Math.cos(0.4) + y0;
+                ptmp.z = p[i].z;
+                p[i] = ptmp;
+            }
+        }
 
-        function animate()
-		{
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			ctx.save();
+        function add_cubo(p, t, x0, y0, z0, col1, col2)
+        {
+            let n = p.length;
+            p.push({ x: x0+1,  y: y0-1,  z: z0-1 });
+            p.push({ x: x0+1,  y: y0+1,  z: z0-1 });
+            p.push({ x: x0-1,  y: y0+1,  z: z0-1 });
+            p.push({ x: x0-1,  y: y0-1,  z: z0-1 });
+            p.push({ x: x0+1,  y: y0-1,  z: z0+1 });
+            p.push({ x: x0+1,  y: y0+1,  z: z0+1 });
+            p.push({ x: x0-1,  y: y0+1,  z: z0+1 });
+            p.push({ x: x0-1,  y: y0-1,  z: z0+1 });
+            
+            //if (col == "red") 
+            t.push({ v: [p[n],   p[n+1], p[n+2]], col:col1 });
+            
+            //if (col == "red")
+            // t.push({ v: [p[n],   p[n+2], p[n+3]], col:"red" });
+            
+            //if (col == "green")
+            t.push({ v: [p[n],   p[n+1], p[n+5]], col:col2 });
+            
+            //if (col == "green")
+            // t.push({ v: [p[n],   p[n+4], p[n+5]], col:"green" });
+            
+            // t.push({ v: [p[n],   p[n+3], p[n+4]], col:"blue" });
+            // t.push({ v: [p[n+7], p[n+3], p[n+4]], col:"blue" });
+        }
+        
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+        
+        async function animate()
+        {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
 
-			let p = [
-			  { x: 1,  y: -1,  z: -1 },
-			  { x: 1,  y:  1,  z: -1 },
-			  { x:-1,  y:  1,  z: -1 },
-									 
-			  { x:-1,  y: -1,  z: -1 },
-			  { x: 1,  y: -1,  z:  1 },
-			  { x: 1,  y:  1,  z:  1 },
-									 
-			  { x:-1,  y:  1,  z:  1 },
-			  { x:-1,  y: -1,  z:  1 },
-									 
-			  { x:-3,  y: 1.4, z: -3 },
-			  { x:-3,  y: 1.4, z:  3 },
-			  { x: 3,  y: 1.4, z: -3 },
-			  { x: 3,  y: 1.4, z:  3 }
-			];
+            let p = [
+                    ];
+              /*
+              { x: 1,  y: -1,  z: -1 },
+              { x: 1,  y:  1,  z: -1 },
+              { x:-1,  y:  1,  z: -1 },
+                                     
+              { x:-1,  y: -1,  z: -1 },
+              { x: 1,  y: -1,  z:  1 },
+              { x: 1,  y:  1,  z:  1 },
+                                     
+              { x:-1,  y:  1,  z:  1 },
+              { x:-1,  y: -1,  z:  1 },
+                                     
+              { x:-3,  y: 1.4, z: -3 },
+              { x:-3,  y: 1.4, z:  3 },
+              { x: 3,  y: 1.4, z: -3 },
+              { x: 3,  y: 1.4, z:  3 }
+              */
+            // ];
 
-			let t = [
-				  { v: [ p[0],  p[1],  p[2] ],  col: "red"      },  // davanti
-				  { v: [ p[0],  p[2],  p[3] ],  col: "red"      },  // davanti ***
-				  { v: [ p[0],  p[1],  p[5] ],  col: "green"    },  // destra
-				  { v: [ p[0],  p[4],  p[5] ],  col: "green"    },  // destra
-				  { v: [ p[0],  p[3],  p[4] ],  col: "blue"     },  // sopra
-				  { v: [ p[7],  p[3],  p[4] ],  col: "blue"     },  // sopra
-				  { v: [ p[7],  p[4],  p[5] ],  col: "yellow"   },  // dietro
-				  { v: [ p[5],  p[6],  p[7] ],  col: "yellow"   },  // dietro
-				  { v: [ p[7],  p[3],  p[2] ],  col: "cyan"     },  // sx
-				  { v: [ p[2],  p[6],  p[7] ],  col: "cyan"     },  // sx ***
-				  { v: [ p[1],  p[6],  p[2] ],  col: "grey"     },  // sotto
-				  { v: [ p[6],  p[5],  p[1] ],  col: "grey"     },  // sotto
+            let t = [
+                    ];
+                  /*
+                  { v: [ p[0],  p[1],  p[2] ],  col: "red"      },  // davanti
+                  { v: [ p[0],  p[2],  p[3] ],  col: "red"      },  // davanti ***
+                  { v: [ p[0],  p[1],  p[5] ],  col: "green"    },  // destra
+                  { v: [ p[0],  p[4],  p[5] ],  col: "green"    },  // destra
+                  { v: [ p[0],  p[3],  p[4] ],  col: "blue"     },  // sopra
+                  { v: [ p[7],  p[3],  p[4] ],  col: "blue"     },  // sopra
+                  { v: [ p[7],  p[4],  p[5] ],  col: "yellow"   },  // dietro
+                  { v: [ p[5],  p[6],  p[7] ],  col: "yellow"   },  // dietro
+                  { v: [ p[7],  p[3],  p[2] ],  col: "cyan"     },  // sx
+                  { v: [ p[2],  p[6],  p[7] ],  col: "cyan"     },  // sx ***
+                  { v: [ p[1],  p[6],  p[2] ],  col: "grey"     },  // sotto
+                  { v: [ p[6],  p[5],  p[1] ],  col: "grey"     },  // sotto
+                  */
+                  /*
+                  { v: [ p[8],  p[9],  p[10] ], col: "orange"   },  // sotto base
+                  { v: [ p[9],  p[10], p[11] ], col: "orange"   }   // sotto base
+                  */
+            // ];
 
-				  { v: [ p[8],  p[9],  p[10] ], col: "orange"   },  // sotto base
-				  { v: [ p[9],  p[10], p[11] ], col: "orange"   }   // sotto base
-			];                  
-			
-			// ruota su asse y
-			ruota_su_asse_y(p, 0, 0); // POS_CUBE_X, POS_CUBE_Z);
+            add_cubo(p, t, 0, 0, 9.5, "green", "yellow");
+            add_cubo(p, t, 0, 0, 5.5, "red" , "blue");
 
-			// ruota su asse x
-			ruota_su_asse_x(p, 0, 0);
-			
-			if (0)
-			{
-				for (let i = 0; i < p.length; i++)
-				{
-					p[i].x = p[i].x * 50;
-					p[i].y = p[i].y * 50;
-				}
-			}
-			else
-			{
-				let prof = 15; // -Pcam.z;
-				for (let i = 0; i < p.length; i++)
-				{
-					p[i].x = (p[i].x * 500) / (p[i].z + prof);
-					p[i].y = (p[i].y * 500) / (p[i].z + prof);
-					p[i].z = 1 / (p[i].z + prof); //  * 400) / (p[i].z + prof);
-				}
-				Poss = {x:0, y:0, z:-999999999999 };
-			}
-			// Eseguiamo la funzione al caricamento della pagina
-			//if (0)
+            // ruota su asse y
+            ruota_su_asse_y(p, 0, 7.5); // POS_CUBE_X, POS_CUBE_Z);
+
+            // ruota su asse x
+            ruota_su_asse_x(p, 0, 0);
+            
+            if (1)
+            {
+                for (let i = 0; i < p.length; i++)
+                {
+                    p[i].x = p[i].x * 50;
+                    p[i].y = p[i].y * 50;
+                }
+                Poss = {x:0, y:0, z:-999999999999999 };
+            }
+            else
+            {
+                let prof = 0;
+                for (let i = 0; i < p.length; i++)
+                {
+                    p[i].x = (p[i].x * 500) / (p[i].z + prof);
+                    p[i].y = (p[i].y * 500) / (p[i].z + prof);
+                    p[i].z = 1 / (p[i].z + prof); //  * 400) / (p[i].z + prof);
+                }
+                Poss = {x:0, y:0, z:999999999 };
+            }
+            // Eseguiamo la funzione al caricamento della pagina
+            //if (0)
             for (let j = 0; j < t.length - 1 ; j++)
-			{
-				for (let i = 0; i < t.length - 1; i++)
-				{
-					confronta(t, i, i + 1);
-				}
-			}
+            {
+                for (let i = 0; i < t.length - 1; i++)
+                {
+                    confronta(t, i, i + 1);
+                }
+            }
 
-		
-			for (let i = 0; i < t.length; i++)
-			{
-				disegna(t[t.length - i - 1]);
-				//disegna(t[i]);
-			}
-			
-			// ctx.restore();
-			//ctx.globalAlpha = 0.8;
-			alfa += 0.01;
-			
-			requestAnimationFrame(animate);
-		}
-		
-		animate();
+        
+            for (let i = 0; i < t.length; i++)
+            {
+                //disegna(t[t.length - i - 1]);
+                disegna(t[i]);
+            }
+            
+            // ctx.restore();
+            //ctx.globalAlpha = 0.8;
+            // alfa += 0.01;
+            
+            while (stop)
+            {
+                await delay(100);
+            }
+            await delay(100);
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
     </script>
 </body>
 
