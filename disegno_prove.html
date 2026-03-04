@@ -50,7 +50,8 @@
             
             if ((t[A].col == "blue" && t[B].col == "green") ||
                 (t[B].col == "blue" && t[A].col == "green"))
-                    debugger;
+                    // debugger
+                    ;
                 
             // equazione piano punti di A
             let a = (t[A].v[1].y - t[A].v[0].y) * (t[A].v[2].z - t[A].v[0].z) - (t[A].v[1].z - t[A].v[0].z) * (t[A].v[2].y - t[A].v[0].y);
@@ -335,11 +336,14 @@
             }
             // Eseguiamo la funzione al caricamento della pagina
             //if (0)
-            for (let j = 0; j < t.length - 1 ; j++)
+            for (let j = 0; j < t.length ; j++)
             {
-                for (let i = 0; i < t.length - 1; i++)
+                for (let i = j; i < t.length; i++)
                 {
-                    confronta(t, i, i + 1);
+                    if (i != j)
+                    {
+                        confronta(t, j, i);
+                    }
                 }
             }
 
